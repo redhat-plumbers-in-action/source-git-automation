@@ -1,0 +1,98 @@
+name: Source Git Automation
+description: Set of actions for systemd source-git automation
+
+branding:
+  icon: layers
+  color: blue
+
+inputs:
+  pr-number:
+    required: false
+    description: Pull Request number
+  pr-metadata:
+    required: false
+    description: Pull Request metadata
+
+  bugzilla-api-token:
+    required: true
+    description: Bugzilla API Token
+  jira-api-token:
+    required: true
+    description: Jira API Token
+  token:
+    required: true
+    description: GitHub TOKEN or PAT
+
+runs:
+  using: composite
+  
+  steps:
+    # When running on schedule, we need to fetch the PR metadata
+    # But when running on workflow_run, we already have the PR metadata in form of artifact.
+    # This step is skipped when pr-metadata is provided as input.
+    - if: ${{ !inputs.pr-metadata }}
+      id: metadata
+      name: Gather Pull Request Metadata
+      uses: redhat-plumbers-in-action/gather-pull-request-metadata@v1
+      with:
+        pr-number: ${{ inputs.pr-number }}
+
+    # Lint the commits in the PR
+    - id: commit-linter
+      name: Lint Commits
+      uses: redhat-plumbers-in-action/advanced-commit-linter@main
+      with:
+        pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
+        token: ${{ inputs.token }}
+
+    # Validate the tracker provided in commit messages
+    - if: ${{ !cancelled() }}
+      id: tracker-validator
+      name: Validate Tracker
+      uses: redhat-plumbers-in-action/tracker-validator@main
+      with:
+        pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
+        component: systemd
+        tracker: ${{ fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.tracker.id }}
+        tracker-type: ${{ fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.tracker.type }}
+        bugzilla-instance: https://bugzilla.redhat.com
+        bugzilla-api-token: ${{ inputs.bugzilla-api-token }}
+        jira-instance: https://issues.redhat.com
+        jira-api-token: ${{ inputs.jira-api-token }}
+        token: ${{ inputs.token }}
+
+    # Validate the pull request (CI, review, etc.)
+    - if: ${{ !cancelled() }}
+      id: pull-request-validator
+      name: Pull Request Validator
+      uses: redhat-plumbers-in-action/pull-request-validator@main
+      with:
+        pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
+        token: ${{ inputs.token }}
+
+    # Merge the PR if all checks passed
+    - id: auto-merge
+      name: Auto Merge
+      uses: redhat-plumbers-in-action/auto-merge@main
+      with:
+        pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
+        tracker: ${{ fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.tracker.id }}
+        tracker-type: ${{ fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.tracker.type }}
+        bugzilla-instance: https://bugzilla.redhat.com
+        bugzilla-api-token: ${{ inputs.bugzilla-api-token }}
+        jira-instance: https://issues.redhat.com
+        jira-api-token: ${{ inputs.jira-api-token }}
+        token: ${{ inputs.token }}
+
+    # Always show the results in PR sticky comment
+    - if: ${{ !cancelled() }}
+      name: Show results in PR comment
+      uses: redhat-plumbers-in-action/issue-commentator@main
+      with:
+        issue: ${{ fromJSON(inputs.pr-metadata).number }}
+        message: |
+          ${{ steps.commit-linter.outputs.validated-pr-metadata && toJSON(fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.message) || '' }}
+          ${{ steps.tracker-validator.outputs.status && steps.tracker-validator.outputs.status || '' }}
+          ${{ steps.pull-request-validator.outputs.status && steps.pull-request-validator.outputs.status || '' }}
+          ${{ steps.auto-merge.outputs.status && steps.auto-merge.outputs.status || '' }}
+        token: ${{ inputs.token }}
