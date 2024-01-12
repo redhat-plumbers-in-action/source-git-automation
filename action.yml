@@ -89,7 +89,7 @@ runs:
       name: Show results in PR comment
       uses: redhat-plumbers-in-action/issue-commentator@v1
       with:
-        issue: ${{ fromJSON(inputs.pr-metadata).number }}
+        issue: ${{ inputs.pr-metadata && fromJSON(inputs.pr-metadata).number || fromJSON(steps.metadata.outputs.metadata).number }}
         message: |
           ${{ steps.commit-linter.outputs.validated-pr-metadata && toJSON(fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.message) || '' }}
           ${{ steps.tracker-validator.outputs.status && steps.tracker-validator.outputs.status || '' }}
