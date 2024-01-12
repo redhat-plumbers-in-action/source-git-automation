@@ -40,7 +40,7 @@ runs:
     # Lint the commits in the PR
     - id: commit-linter
       name: Lint Commits
-      uses: redhat-plumbers-in-action/advanced-commit-linter@main
+      uses: redhat-plumbers-in-action/advanced-commit-linter@v3
       with:
         pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
         token: ${{ inputs.token }}
@@ -49,7 +49,7 @@ runs:
     - if: ${{ !cancelled() }}
       id: tracker-validator
       name: Validate Tracker
-      uses: redhat-plumbers-in-action/tracker-validator@main
+      uses: redhat-plumbers-in-action/tracker-validator@v2
       with:
         pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
         component: systemd
@@ -65,7 +65,7 @@ runs:
     - if: ${{ !cancelled() }}
       id: pull-request-validator
       name: Pull Request Validator
-      uses: redhat-plumbers-in-action/pull-request-validator@main
+      uses: redhat-plumbers-in-action/pull-request-validator@v2
       with:
         pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
         token: ${{ inputs.token }}
@@ -73,7 +73,7 @@ runs:
     # Merge the PR if all checks passed
     - id: auto-merge
       name: Auto Merge
-      uses: redhat-plumbers-in-action/auto-merge@main
+      uses: redhat-plumbers-in-action/auto-merge@v2
       with:
         pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
         tracker: ${{ fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.tracker.id }}
@@ -87,7 +87,7 @@ runs:
     # Always show the results in PR sticky comment
     - if: ${{ !cancelled() }}
       name: Show results in PR comment
-      uses: redhat-plumbers-in-action/issue-commentator@main
+      uses: redhat-plumbers-in-action/issue-commentator@v1
       with:
         issue: ${{ fromJSON(inputs.pr-metadata).number }}
         message: |
