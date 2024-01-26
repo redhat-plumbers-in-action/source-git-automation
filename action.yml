@@ -1,5 +1,6 @@
 name: Source Git Automation
-description: Set of actions for systemd source-git automation
+description: |
+  Ready to use Source Git Automation with commit linting, tracker validation, pull request validation, auto merge and more
 
 branding:
   icon: layers
