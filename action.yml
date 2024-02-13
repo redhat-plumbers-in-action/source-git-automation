@@ -13,11 +13,12 @@ inputs:
     required: false
     description: Pull Request metadata
 
+  # At least one of the following tracker API tokens is required
   bugzilla-api-token:
-    required: true
+    required: false
     description: Bugzilla API Token
   jira-api-token:
-    required: true
+    required: false
     description: Jira API Token
   token:
     required: true
