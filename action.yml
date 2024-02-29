@@ -46,6 +46,15 @@ runs:
         pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
         token: ${{ inputs.token }}
 
+    # Look for mentions, follow-up and revert commits in the upstream
+    - if: ${{ !cancelled() }}
+      id: regression-sniffer
+      name: Look for Follow-ups
+      uses: redhat-plumbers-in-action/regression-sniffer@v1
+      with:
+        pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
+        token: ${{ inputs.token }}
+
     # Validate the tracker provided in commit messages
     - if: ${{ !cancelled() }}
       id: tracker-validator
@@ -93,6 +102,7 @@ runs:
         issue: ${{ inputs.pr-metadata && fromJSON(inputs.pr-metadata).number || fromJSON(steps.metadata.outputs.metadata).number }}
         message: |
           ${{ steps.commit-linter.outputs.validated-pr-metadata && toJSON(fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.message) || '' }}
+          ${{ steps.regression-sniffer.outputs.status && steps.regression-sniffer.outputs.status || '' }}
           ${{ steps.tracker-validator.outputs.status && steps.tracker-validator.outputs.status || '' }}
           ${{ steps.pull-request-validator.outputs.status && steps.pull-request-validator.outputs.status || '' }}
           ${{ steps.auto-merge.outputs.status && steps.auto-merge.outputs.status || '' }}
