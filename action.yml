@@ -13,6 +13,11 @@ inputs:
     required: false
     description: Pull Request metadata
 
+  component:
+    required: false
+    default: systemd
+    description: Name of the component in supported trackers
+
   # At least one of the following tracker API tokens is required
   bugzilla-api-token:
     required: false
@@ -62,7 +67,7 @@ runs:
       uses: redhat-plumbers-in-action/tracker-validator@v2
       with:
         pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
-        component: systemd
+        component: ${{ inputs.component }}
         tracker: ${{ fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.tracker.id }}
         tracker-type: ${{ fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.tracker.type }}
         bugzilla-instance: https://bugzilla.redhat.com
