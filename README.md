@@ -57,7 +57,7 @@ Powered by: [Advanced Commit Linter](https://github.com/redhat-plumbers-in-actio
 
 ### Tracker Integration and Validation
 
-It validates provided tracker reverences and updates them with a link to the Pull Request. Supported tracker systems:
+It validates provided tracker references and updates them with a link to the Pull Request. Supported tracker systems:
 
 - [Bugzilla](https://www.bugzilla.org/)
 - [Jira](https://www.atlassian.com/software/jira)
@@ -81,7 +81,7 @@ Powered by: [Auto Merge](https://github.com/redhat-plumbers-in-action/auto-merge
 
 ## Installation
 
-Enabeling of Source Git Automation for requires the following steps:
+Enabling of Source Git Automation for requires the following steps:
 
 > [!TIP]
 >
@@ -352,7 +352,7 @@ See [Auto Merge](https://github.com/redhat-plumbers-in-action/auto-merge) docume
 labels:
   dont-merge: dont-merge
   manual-merge: pr/needs-manual-merge
-target-branch': ['rhel-7.9']
+target-branch: ['rhel-7.9']
 ```
 
 <p align="center">
