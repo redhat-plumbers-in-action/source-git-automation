@@ -65,7 +65,7 @@ runs:
     - if: ${{ !cancelled() }}
       id: tracker-validator
       name: Validate Tracker
-      uses: redhat-plumbers-in-action/tracker-validator@v2
+      uses: redhat-plumbers-in-action/tracker-validator@v3
       with:
         pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
         component: ${{ inputs.component }}
