@@ -74,6 +74,7 @@ runs:
         bugzilla-instance: https://bugzilla.redhat.com
         bugzilla-api-token: ${{ inputs.bugzilla-api-token }}
         jira-instance: https://issues.redhat.com
+        jira-email: systemd-maint@redhat.com
         jira-api-token: ${{ inputs.jira-api-token }}
         token: ${{ inputs.token }}
 
