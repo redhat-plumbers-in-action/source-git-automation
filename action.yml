@@ -90,7 +90,7 @@ runs:
     # Merge the PR if all checks passed
     - id: auto-merge
       name: Auto Merge
-      uses: redhat-plumbers-in-action/auto-merge@v2
+      uses: redhat-plumbers-in-action/auto-merge@v3
       with:
         pr-metadata: ${{ inputs.pr-metadata && inputs.pr-metadata || steps.metadata.outputs.metadata }}
         tracker: ${{ fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.tracker.id }}
