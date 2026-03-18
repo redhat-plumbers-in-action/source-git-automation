@@ -73,7 +73,7 @@ runs:
         tracker-type: ${{ fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.tracker.type }}
         bugzilla-instance: https://bugzilla.redhat.com
         bugzilla-api-token: ${{ inputs.bugzilla-api-token }}
-        jira-instance: https://issues.redhat.com
+        jira-instance: https://redhat.atlassian.net
         jira-email: systemd-maint@redhat.com
         jira-api-token: ${{ inputs.jira-api-token }}
         token: ${{ inputs.token }}
@@ -97,7 +97,8 @@ runs:
         tracker-type: ${{ fromJSON(steps.commit-linter.outputs.validated-pr-metadata).validation.tracker.type }}
         bugzilla-instance: https://bugzilla.redhat.com
         bugzilla-api-token: ${{ inputs.bugzilla-api-token }}
-        jira-instance: https://issues.redhat.com
+        jira-instance: https://redhat.atlassian.net
+        jira-email: systemd-maint@redhat.com
         jira-api-token: ${{ inputs.jira-api-token }}
         token: ${{ inputs.token }}
 
